@@ -1,0 +1,58 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "Biblical commentary compiled by Thomas Aquinas in the mid-thirteenth century, containing excerpts of the earlier biblical commentators.",
+    "title": "Catena Aurea",
+    "type": "object",
+    "properties": {
+        "evangelium": {
+            "type": "object",
+            "required": [
+                "evangelista",
+                "capitulum",
+                "versus"
+            ],
+            "properties": {
+                "evangelista": {
+                    "type": "string"
+                },
+                "capitulum": {
+                    "type": "integer"
+                },
+                "versus": {
+                    "type": "integer"
+                },
+                "textus": {
+                    "type": "string"
+                },
+                "commentarium": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "exegeta",
+                            "textus",
+                            "fons"
+                        ],
+                        "properties": {
+                            "exegeta": {
+                                "type": "string"
+                            },
+                            "textus": {
+                                "type": "string"
+                            },
+                            "fons": {
+                                "type": "string"
+                            },
+                            "nota": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
