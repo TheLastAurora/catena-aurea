@@ -1,8 +1,7 @@
-# Demarcador de versículos
+## Page types:
 
-- Tipo A (regular):
+Identify and return:
 
-
-
-- Tipo B (distinctio):
-
+	- Index
+	- Subindex
+	- Content

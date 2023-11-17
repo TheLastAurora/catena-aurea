@@ -10,15 +10,10 @@ import os
 cwd = os.path.dirname(__file__)
 log_dir = os.path.join(cwd, 'logs')
 out_dir = os.path.join(cwd, 'ouput')
+os.makedirs(log_dir, exist_ok=True)
+os.makedirs(out_dir, exist_ok=True)
 
-if not os.path.exists(log_dir):
-    os.makedirs(log_dir)
-
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
-
-logging.basicConfig(filename=os.path.join(log_dir, 'crawler.log'), format='%(asctime)s %(message)s', level=logging.ERROR, filemode='w')
-
+logging.basicConfig(filename=os.path.join(log_dir, 'crawler.log'), format='%(asctime)s %(message)s', level=logging.WARNING, filemode='w')
 
 
 def get_page(url: str) -> str:
@@ -30,7 +25,7 @@ def get_page(url: str) -> str:
             raise
         return res.text
     except Exception as re:
-        logging.error(f'[REQUEST] Failed to handle request for {url}.')
+        logging.warning(f'[REQUEST] Failed to handle request for {url}.')
         return ""
 
 
@@ -41,10 +36,12 @@ def _crawl(page: str, base: str) -> dict:
     mapping = {urljoin(base, r.get('href')): r.get_text() for r in refs}
     return mapping
 
+
 async def crawler_async(url: str, visited: set, to_visit: dict) -> dict:
     if url not in visited:
                 to_visit.update(_crawl(page=get_page(url), base=index))
                 visited.add(url)
+
 
 async def crawl(index: str, *args, depth=2) -> dict:
     """Executes the crawl operation for the given index at certain depth, returning all the references."""

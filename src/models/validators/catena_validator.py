@@ -4,6 +4,8 @@ import bs4
 import re
 import json
 
+# TODO: Define classes to be used for Catena (implement all logic here).
+
 # logging.basicConfig(filename=os.path.join(log_dir, 'catena_validator.log'), format='%(asctime)s %(message)s', level=logging.ERROR, filemode='w')
 
 if __name__ == '__main__':
