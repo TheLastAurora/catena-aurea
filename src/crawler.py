@@ -31,7 +31,7 @@ def get_page(url: str) -> str:
 
 def _crawl(page: str, base: str) -> dict:
     """Gather all the references from page and return its mapping in the form of "url": "inner_text"."""
-    content = BeautifulSoup(page, 'html.parser')
+    content = BeautifulSoup(page, 'lxml')
     refs = content.find_all('a')
     mapping = {urljoin(base, r.get('href')): r.get_text() for r in refs}
     return mapping

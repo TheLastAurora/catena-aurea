@@ -40,3 +40,5 @@ Identify and return:
 							- .apparat_texte
 								- sup (NOTE Nº)
 								- span (NOTE)
+
+Se unite_textuelle termina com dois pontos e não existe outro unite_textuelle na frente, pegar o primeiro do próximo.
