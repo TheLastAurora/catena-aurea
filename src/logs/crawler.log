@@ -1,47 +1,45 @@
-2023-11-16 09:05:11,948 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Thomas de Aquino, Expositio continua sive catena aurea super Evangelia : introductio.
-2023-11-16 09:05:15,115 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/index.php.
-2023-11-16 09:05:15,801 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/introduction.php.
-2023-11-16 09:05:16,478 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=biblia.
-2023-11-16 09:05:17,139 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=glo.
-2023-11-16 09:05:17,825 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=media.
-2023-11-16 09:05:18,506 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=magna.
-2023-11-16 09:05:19,244 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=hug.
-2023-11-16 09:05:19,932 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=phi.
-2023-11-16 09:05:20,658 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=catena.
-2023-11-16 09:05:21,361 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=lyr.
-2023-11-16 09:05:22,083 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/glossem_formulaire.php.
-2023-11-16 09:05:22,806 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/index-liste.php.
-2023-11-16 09:05:23,480 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/formulaire_recherche.php.
-2023-11-16 09:05:24,203 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/page.php?id=66.
-2023-11-16 09:05:33,522 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/page.php?id=2.
-2023-11-16 09:05:34,265 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/page.php?id=3.
-2023-11-16 09:05:42,357 Failed to handle request for http://lem.vjf.cnrs.fr/.
-2023-11-16 09:05:51,525 Failed to handle request for https://www.univ-psl.fr/fr.
-2023-11-16 09:06:06,218 Failed to handle request for http://www.hesam.eu/labexhastec/.
-2023-11-16 09:11:01,020 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Biblia Communis : introductio.
-2023-11-16 09:11:25,190 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=glo&numLivre=09.
-2023-11-16 09:14:10,416 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Glossa ordinaria : introductio.
-2023-11-16 09:14:22,274 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Gilbertus Pictaviensis, Glossa media in Psalmos et epistolas Pauli : introductio.
-2023-11-16 09:14:35,958 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Petrus Lombardus, Glossa magna vel collectaneae in Psalmos et epistolas Pauli : introductio.
-2023-11-16 09:14:41,455 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=01.
-2023-11-16 09:15:21,612 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=20.
-2023-11-16 09:15:27,085 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=21.
-2023-11-16 09:15:37,567 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=23.
-2023-11-16 09:15:43,088 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=24.
-2023-11-16 09:16:02,262 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=28.
-2023-11-16 09:17:51,358 Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=82.
-2023-11-16 09:17:55,243 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Hugo de Sancto Caro, Postille in Bibliam : introductio.
-2023-11-16 09:17:55,243 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Philippus Cancellarius, Summa super Psalterium : introductio.
-2023-11-16 09:18:47,116 Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complément d'information pour l'édition de Nicolaus de Lyra : introductio.
-2023-11-16 09:19:18,345 Failed to handle request for http://mss.bmlonline.it/s.aspx?Id=AWOHzDUXI1A4r7GxMB7n#/oro/174.
-2023-11-16 09:19:57,789 Failed to handle request for http://mss.bmlonline.it/s.aspx?Id=AWOHzDUXI1A4r7GxMB7n#/oro/231.
-2023-11-16 09:20:00,618 Failed to handle request for http://mss.bmlonline.it/s.aspx?Id=AWOMrqemI1A4r7GxMYcT#/oro/314.
-2023-11-16 09:20:35,609 Failed to handle request for https://archive.org/details/A335057/page/n383/mode/2up.
-2023-11-16 09:21:03,826 Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complément d'information pour <54. Tabula ‘Fons ascendens’>.
-2023-11-16 09:21:08,853 Failed to handle request for http://92.154.49.37/glosse/php/page.php?id=24.
-2023-11-16 09:22:25,775 Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complément d'information pour <55. Catena aurea in Matthaeum>.
-2023-11-16 09:23:08,442 Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complément d'information pour <56. Catena aurea in Marcum>.
-2023-11-16 09:24:14,431 Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complément d'information pour <57. Catena aurea in Lucam>.
-2023-11-16 09:25:05,671 Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complément d'information pour <58. Catena aurea in Ioannem>.
-2023-11-16 09:25:23,565 Failed to handle request for http://lem.vjf.cnrs.fr/?lang=fr.
-2023-11-16 09:25:46,892 Failed to handle request for http://gloss-e.irht.cnrs.fr/php/page.php?id=33.
+2023-11-19 08:36:07,044 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Thomas de Aquino, Expositio continua sive catena aurea super Evangelia : introductio.
+2023-11-19 08:36:10,078 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/index.php.
+2023-11-19 08:36:10,774 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/introduction.php.
+2023-11-19 08:36:11,466 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=biblia.
+2023-11-19 08:36:12,150 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=glo.
+2023-11-19 08:36:12,828 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=media.
+2023-11-19 08:36:13,525 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=magna.
+2023-11-19 08:36:14,207 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=hug.
+2023-11-19 08:36:14,890 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=phi.
+2023-11-19 08:36:15,574 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=catena.
+2023-11-19 08:36:16,259 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/livres-liste.php?id=lyr.
+2023-11-19 08:36:16,943 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/glossem_formulaire.php.
+2023-11-19 08:36:17,620 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/index-liste.php.
+2023-11-19 08:36:18,304 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/formulaire_recherche.php.
+2023-11-19 08:36:18,992 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/page.php?id=66.
+2023-11-19 08:36:27,522 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/page.php?id=2.
+2023-11-19 08:36:28,208 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/php/page.php?id=3.
+2023-11-19 08:36:36,800 [REQUEST] Failed to handle request for http://lem.vjf.cnrs.fr/.
+2023-11-19 08:36:47,173 [REQUEST] Failed to handle request for https://www.univ-psl.fr/fr.
+2023-11-19 08:36:55,413 [REQUEST] Failed to handle request for http://www.aibl.fr/.
+2023-11-19 08:37:02,558 [REQUEST] Failed to handle request for http://www.hesam.eu/labexhastec/.
+2023-11-19 08:40:14,381 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=biblia&numLivre=28.
+2023-11-19 08:41:52,827 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Biblia Communis : introductio.
+2023-11-19 08:41:59,890 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=glo&numLivre=01.
+2023-11-19 08:42:41,213 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=glo&numLivre=16.
+2023-11-19 08:45:13,573 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=glo&numLivre=84.
+2023-11-19 08:45:15,471 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Glossa ordinaria : introductio.
+2023-11-19 08:45:26,915 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Gilbertus Pictaviensis, Glossa media in Psalmos et epistolas Pauli : introductio.
+2023-11-19 08:45:40,619 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Petrus Lombardus, Glossa magna vel collectaneae in Psalmos et epistolas Pauli : introductio.
+2023-11-19 08:45:46,077 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=01.
+2023-11-19 08:45:56,645 [REQUEST] Failed to handle request for https://gloss-e.irht.cnrs.fr/php/editions.php?id=hug&numLivre=03.
+2023-11-19 08:48:50,730 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Hugo de Sancto Caro, Postille in Bibliam : introductio.
+2023-11-19 08:48:50,730 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Philippus Cancellarius, Summa super Psalterium : introductio.
+2023-11-19 08:49:40,948 [REQUEST] Failed to handle request for mailto:?to=contact@glossae.net &subject=Signaler un complÃ©ment d'information pour l'Ã©dition de Nicolaus de Lyra : introductio.
+2023-11-19 08:50:15,846 [REQUEST] Failed to handle request for http://mss.bmlonline.it/s.aspx?Id=AWOHzDUXI1A4r7GxMB7n#/oro/174.
+2023-11-19 08:50:55,432 [REQUEST] Failed to handle request for http://mss.bmlonline.it/s.aspx?Id=AWOHzDUXI1A4r7GxMB7n#/oro/231.
+2023-11-19 08:50:58,849 [REQUEST] Failed to handle request for http://mss.bmlonline.it/s.aspx?Id=AWOMrqemI1A4r7GxMYcT#/oro/314.
+2023-11-19 08:51:57,829 [REQUEST] Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complÃ©ment d'information pour <54.Â Tabula â€˜Fons ascendensâ€™>.
+2023-11-19 08:53:24,426 [REQUEST] Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complÃ©ment d'information pour <55. Catena aurea in Matthaeum>.
+2023-11-19 08:54:06,428 [REQUEST] Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complÃ©ment d'information pour <56. Catena aurea in Marcum>.
+2023-11-19 08:55:14,043 [REQUEST] Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complÃ©ment d'information pour <57. Catena aurea in Lucam>.
+2023-11-19 08:56:06,391 [REQUEST] Failed to handle request for mailto:?to=glossae@irht.cnrs.fr &subject=Signaler un complÃ©ment d'information pour <58. Catena aurea in Ioannem>.
+2023-11-19 08:56:24,860 [REQUEST] Failed to handle request for http://lem.vjf.cnrs.fr/?lang=fr.
+2023-11-19 08:56:45,070 [REQUEST] Failed to handle request for https://www.huma-num.fr/.
+2023-11-19 08:56:47,108 [REQUEST] Failed to handle request for http://gloss-e.irht.cnrs.fr/php/page.php?id=33.

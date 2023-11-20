@@ -9,7 +9,7 @@ import os
 
 cwd = os.path.dirname(__file__)
 log_dir = os.path.join(cwd, 'logs')
-out_dir = os.path.join(cwd, 'ouput')
+out_dir = os.path.join(cwd, 'output')
 os.makedirs(log_dir, exist_ok=True)
 os.makedirs(out_dir, exist_ok=True)
 
@@ -60,7 +60,9 @@ async def crawl(index: str, *args, depth=2) -> dict:
 
 if __name__ == "__main__":
     index = 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena'
+    logging.info('Crawler started...')
     data = asyncio.run(crawl(index))
+    logging.info('Crawling job finished.')
     if data:
         with open(os.path.join(out_dir, 'output.json'), 'w', encoding='utf-8') as f:
             json.dump(data, f)
