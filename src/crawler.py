@@ -13,7 +13,8 @@ out_dir = os.path.join(cwd, 'output')
 os.makedirs(log_dir, exist_ok=True)
 os.makedirs(out_dir, exist_ok=True)
 
-logging.basicConfig(filename=os.path.join(log_dir, 'crawler.log'), format='%(asctime)s %(message)s', level=logging.WARNING, filemode='w')
+logging.basicConfig(filename=os.path.join(log_dir, 'crawler.log'),
+                    format='%(asctime)s %(message)s', level=logging.WARNING, filemode='w')
 
 
 def get_page(url: str) -> str:
@@ -31,16 +32,25 @@ def get_page(url: str) -> str:
 
 def _crawl(page: str, base: str) -> dict:
     """Gather all the references from page and return its mapping in the form of "url": "inner_text"."""
+
+    def _split_el(el: str) -> str:
+        try:
+            return el.split()[0]
+        except:
+            return el
+
+    if page == "":
+        return {}
     content = BeautifulSoup(page, 'lxml')
     refs = content.find_all('a')
-    mapping = {urljoin(base, r.get('href')): r.get_text() for r in refs}
+    mapping = {urljoin(base, _split_el(r.get('href'))): r.get_text() for r in refs}
     return mapping
 
 
 async def crawler_async(url: str, visited: set, to_visit: dict) -> dict:
     if url not in visited:
-                to_visit.update(_crawl(page=get_page(url), base=index))
-                visited.add(url)
+        to_visit.update(_crawl(page=get_page(url), base=index))
+        visited.add(url)
 
 
 async def crawl(index: str, *args, depth=2) -> dict:
@@ -52,7 +62,8 @@ async def crawl(index: str, *args, depth=2) -> dict:
         to_visit = {}
         tasks = []
         for url in mapping.keys():
-            tasks.append(asyncio.create_task(crawler_async(url, visited, to_visit)))
+            tasks.append(asyncio.create_task(
+                crawler_async(url, visited, to_visit)))
         await asyncio.gather(*tasks)
         mapping.update(to_visit)
     return mapping
@@ -65,7 +76,7 @@ if __name__ == "__main__":
     logging.info('Crawling job finished.')
     if data:
         with open(os.path.join(out_dir, 'output.json'), 'w', encoding='utf-8') as f:
-            json.dump(data, f)
+            json.dump(data, f, indent=2)
             print('Crawler finished with success.')
     else:
         raise Exception('Failed to execute crawling routine!')

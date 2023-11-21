@@ -31,25 +31,23 @@ class EmptyPageError(Exception):
         super().__init__(self.message)
 
 
-def extract_refs(pattern: str) -> dict:
+def extract_refs(word: str) -> dict:
     """Tries to match the given url pattern to the references"""
     try:
-        pattern = re.compile(pattern)
+        pattern = re.compile(f'.*{word}.*')
     except re.error as e:
         raise ValueError(f"Invalid regex pattern: {pattern}") from e
     refs = {}
-    with open(
-        os.path.join(os.path.dirname(__file__), "../output/output.json"), mode="r"
-    ) as f:
+    with open(os.path.join(os.path.dirname(__file__), "../output/output.json"), mode="r") as f:
         for line in f:
+            line = '{' + line.strip()[:-1] + '}'
             try:
-                m = re.search(pattern, line).group(0)
-                print(m)
-                refs.update(json.loads(m))
+                if re.search(pattern, line):
+                    refs.update(json.loads(line))
             except:
                 pass
     if not refs:
-        err = NoReferencesError(pattern)
+        err = NoReferencesError(pattern.pattern)
         logging.error(err.message)
         raise err
     return refs
@@ -58,11 +56,12 @@ def extract_refs(pattern: str) -> dict:
 def extract_raw_content(refs: dict) -> Generator:
     """Yields and divides the content of the page based on the page HTML three types: index, subindex, content for each url."""
     for url in refs.keys():
-        core = get_page(url).find("content")
+        _pg = BeautifulSoup(get_page(url), 'html.parser')
+        core = _pg.find('div', {'id': "content"})
         if not core:
             err = EmptyPageError()
             logging.error(err.message)
-            raise err
+            continue
 
         # Formatter
         SYMBOLS = str.maketrans("", "", "<>*0123456789.")
@@ -86,7 +85,8 @@ def extract_raw_content(refs: dict) -> Generator:
 
         # Core content
         elif core.select("#textContainer"):
-            cnt = core[0].find_all("div", class_="verset unite_textuelle".split())
+            cnt = core[0].find_all(
+                "div", class_="verset unite_textuelle".split())
             content = []
             for c in cnt:
                 if c["class"][0] == "verset":
@@ -94,18 +94,18 @@ def extract_raw_content(refs: dict) -> Generator:
                     content.append({"verset": str, "unite_textuelle": []})
                     for s in c.find_all("span"):
                         s.decompose()
-                        content[-1]["verset"] = normalize("NFKD", c.text.strip())
+                        content[-1]["verset"] = normalize(
+                            "NFKD", c.text.strip())
                 else:
-                    content[-1]["unite_textuelle"].append(normalize("NFKD", c.text))
+                    content[-1]["unite_textuelle"].append(
+                        normalize("NFKD", c.text))
             yield {
                 "section": format(core.select_one("#textContainer .titre_edition")),
                 "subsection": core.select_one("#textContainer h2").text,
                 "content": {content},
             }
 
-        yield None
 
-
-def extract(pattern: str) -> dict:
-    core = extract_raw_content(extract_refs(pattern))
+def extract(word: str) -> dict:
+    core = extract_raw_content(extract_refs(word))
     return core
