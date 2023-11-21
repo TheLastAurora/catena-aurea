@@ -1,4 +1,4 @@
-from ..crawler import get_page
+from crawler import get_page
 from unicodedata import normalize
 from bs4 import BeautifulSoup
 from typing import Generator
@@ -39,10 +39,15 @@ def extract_refs(pattern: str) -> dict:
         raise ValueError(f"Invalid regex pattern: {pattern}") from e
     refs = {}
     with open(
-        os.path.join(os.path.dirname(__file__), "../../output/output.json"), mode="r"
+        os.path.join(os.path.dirname(__file__), "../output/output.json"), mode="r"
     ) as f:
         for line in f:
-            refs.update(json.loads(re.search(pattern, line).group(0)))
+            try:
+                m = re.search(pattern, line).group(0)
+                print(m)
+                refs.update(json.loads(m))
+            except:
+                pass
     if not refs:
         err = NoReferencesError(pattern)
         logging.error(err.message)
@@ -53,8 +58,8 @@ def extract_refs(pattern: str) -> dict:
 def extract_raw_content(refs: dict) -> Generator:
     """Yields and divides the content of the page based on the page HTML three types: index, subindex, content for each url."""
     for url in refs.keys():
-        content = get_page(url).find("content")
-        if not content:
+        core = get_page(url).find("content")
+        if not core:
             err = EmptyPageError()
             logging.error(err.message)
             raise err
@@ -66,51 +71,41 @@ def extract_raw_content(refs: dict) -> Generator:
             return x.text.translate(SYMBOLS).strip()
 
         # Index
-        if content.select("#glossa_ordinaria"):
+        if core.select("#glossa_ordinaria"):
             yield {
-                "tittle": format(content.select_one("h4")),
-                "section": [format(s) for s in content.select("nav > ul > li > a")],
+                "tittle": format(core.select_one("h4")),
+                "section": [format(s) for s in core.select("nav > ul > li > a")],
             }
 
         # Subindex
-        elif content.select(".edition_intro"):
+        elif core.select(".edition_intro"):
             yield {
-                "section": format(content.select_one("h1")),
-                "subsection": [
-                    s.text for s in content.select(".corps-edition ul li a")
-                ],
+                "section": format(core.select_one("h1")),
+                "subsection": [s.text for s in core.select(".corps-edition ul li a")],
             }
 
         # Core content
-        elif content.select("#textContainer"):
-            
-            # Formating the versets
-            vs = content.select("#textContainer .edition .verset")
-            norm_versets = []
-            for v in vs:
-                for s in v.find_all('span'):
-                    s.decompose()
-                v = normalize("NFKD", v.text)
-                norm_versets.append(v)
-
-            # Formating the unite_textuelles
-            vs = content.select("#textContainer .edition .unite_textuelle")
-
-            norm_ut = []
-            for ut in vs:
-                ut = normalize("NFKD", ut.text)
-                norm_ut.append(ut)
-
-
+        elif core.select("#textContainer"):
+            cnt = core[0].find_all("div", class_="verset unite_textuelle".split())
+            content = []
+            for c in cnt:
+                if c["class"][0] == "verset":
+                    # Each element of this new list is a set of verses
+                    content.append({"verset": str, "unite_textuelle": []})
+                    for s in c.find_all("span"):
+                        s.decompose()
+                        content[-1]["verset"] = normalize("NFKD", c.text.strip())
+                else:
+                    content[-1]["unite_textuelle"].append(normalize("NFKD", c.text))
             yield {
-                "section": format(content.select_one("#textContainer .titre_edition")),
-                "subsection": content.select_one("#textContainer h2").text,
-                "content": {}
+                "section": format(core.select_one("#textContainer .titre_edition")),
+                "subsection": core.select_one("#textContainer h2").text,
+                "content": {content},
             }
 
         yield None
 
 
 def extract(pattern: str) -> dict:
-    content = extract_raw_content(extract_refs(pattern))
-    return content
+    core = extract_raw_content(extract_refs(pattern))
+    return core
