@@ -118,5 +118,6 @@ def extract_raw_content(refs: dict) -> Generator:
                 }
 
 def extract(word: str) -> dict:
+    """Effectively executes the extraction of the data"""
     core = extract_raw_content(extract_refs(word))
     return core
