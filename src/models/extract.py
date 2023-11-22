@@ -1,5 +1,6 @@
 from crawler import get_page
 from unicodedata import normalize
+from copy import copy
 from bs4 import BeautifulSoup
 from typing import Generator
 import logging
@@ -85,26 +86,24 @@ def extract_raw_content(refs: dict) -> Generator:
 
         # Core content
         elif core.select("#textContainer"):
-            cnt = core[0].find_all(
-                "div", class_="verset unite_textuelle".split())
+            cnt = core.find_all("div", {'class': ['verset', re.compile('.*unite_textuelle.*')]})
             content = []
-            for c in cnt:
+            for _c in cnt:
+                c = copy(_c)
                 if c["class"][0] == "verset":
-                    # Each element of this new list is a set of verses
-                    content.append({"verset": str, "unite_textuelle": []})
+                    content.append({"verset": str, "unite_textuelle": []}) # Each element of this new list is a set of verses
                     for s in c.find_all("span"):
                         s.decompose()
-                        content[-1]["verset"] = normalize(
-                            "NFKD", c.text.strip())
+                        content[-1]["verset"] = normalize("NFKD", c.text.strip())
                 else:
-                    content[-1]["unite_textuelle"].append(
-                        normalize("NFKD", c.text))
-            yield {
-                "section": format(core.select_one("#textContainer .titre_edition")),
-                "subsection": core.select_one("#textContainer h2").text,
-                "content": {content},
-            }
-
+                    content[-1]["unite_textuelle"].append(normalize("NFKD", c.text))
+            if content:
+                # TODO: Fix content append.
+                yield {
+                    "section": format(core.select_one("#textContainer .titre_edition")),
+                    "subsection": core.select_one("#textContainer h2").text,
+                    "content": {[*content]},
+                }
 
 def extract(word: str) -> dict:
     core = extract_raw_content(extract_refs(word))
