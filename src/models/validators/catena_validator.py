@@ -1,10 +1,11 @@
+from typing import List, Dict, Union
 import logging
 from pprint import pprint
 import os
 import re
 import json
 
-# TODO: Define classes to be used for Catena - implement all logic here.
+# TODO: Implement all filtering and validation logic here.
 
 log_dir = os.path.join(os.getcwd(), "logs")
 os.makedirs(log_dir, exist_ok=True)
@@ -24,44 +25,63 @@ with open(os.path.join(os.path.dirname(__file__), "../schemas/catena_schema.json
     schema = json.load(f)
 
 
-def _by_evangelista(evangelium: str) -> list[dict]:
-    """Returns all the chapters from evangelium"""
-    # THIS IS THE STARTPOINT 1
-    pass
+def _by_evangelista(
+    evangelium: str = None,
+    exegeta: str = None,
+    capitulum: int = None,
+    versus: Union[int, List[int]] = None
+) -> Union[List[Dict], Dict, None]:
+    """
+    Returns chapters information based on the specified criteria.
 
-def _by_commentator(exegeta: str) -> list[dict]:
-    """Returns all comments made by the exegeta"""
-    # THIS IS THE STARTPOINT 2
-    pass
+    Parameters:
+        - evangelium (str): The name of the gospel. Use '*' for all gospels.
+        - exegeta (str): The commentator.
+        - capitulum (int): The chapter number.
+        - versus (Union[int, List[int]]): The verse number or a list of the verses numbers.
 
-def _by_chapter(gospel: list) -> list[dict]:
-    """Filters all gospels per chapter"""
-    pass
+    Returns:
+        - List[Dict]: List of chapters if multiple chapters match the criteria.
+        - Dict: Chapter information if a single chapter matches the criteria.
+        - None: If no matching chapters are found.
+    """
 
-def _by_verse(chapter: list) -> list[dict] | dict:
-    """Filters all chapters from gospel per verse (or verses)"""
-    pass
-
-
-def extract_data(*args, **kwargs) -> dict:
-    """Establishes an interface for extracting the data"""
-
-    # User input, thats why is in latin, not english.
-
-    _args = frozenset([kwarg for kwarg in kwargs.keys() if kwarg])
-    # Defining execution flow (filtering)
-    func_mapping = {
-        frozenset(['exegeta']): _by_commentator(),
-        frozenset(['evangelista']): _by_evangelista(),
-        frozenset(['evangelista', 'exegeta']): _by_evangelista(_by_commentator()),
-        frozenset(['evangelista', 'capitulum']): _by_chapter(_by_evangelista()),
-        frozenset(['evangelista', 'capitulum', 'versus']): _by_verse(_by_chapter(_by_evangelista())),
-        frozenset(['evangelista', 'capitulum', 'versus', 'exegeta']): _by_verse(_by_chapter(_by_evangelista(_by_commentator())))
-    }
-
-    # It probably doesn't work yet, this is just to remember the concept.
-    res = func_mapping[_args](args, **kwargs)
-    return res
-
+    if exegeta:
+        if capitulum and versus:
+            # Criteria: 'evangelista', 'capitulum', 'versus', 'exegeta'
+            pass
+        else:
+            # Criteria: 'evangelista', 'exegeta'
+            pass
+    else:
+        if capitulum and versus:
+            # Criteria: 'evangelista', 'capitulum', 'versus'
+            pass
+        else:
+            # Criteria: 'evangelista'
+            if evangelium == '*':
+                # All gospels
+                pass
+            else:
+                # Only selected gospel
+                pass
+    # Placeholder return
+    return None
 
 
+def _by_commentator(exegeta: str) -> List[Dict]:
+    """
+    Retrieves chapter information for a given commentator.
+
+    Parameters:
+        - exegeta (str): The commentator.
+
+    Returns:
+        - List[Dict]: List of chapter information for the specified commentator.
+    """
+
+    # Using _by_evangelista to get all data and then filter
+    evangeliums = [_by_evangelista(exegeta)]
+
+    # Placeholder return
+    return evangeliums
