@@ -1,4 +1,5 @@
 from typing import List, Dict, Union
+from models.extract import extract
 import logging
 from pprint import pprint
 import os
@@ -26,7 +27,7 @@ with open(os.path.join(os.path.dirname(__file__), "../schemas/catena_schema.json
 
 
 def _by_evangelista(
-    evangelium: str = None,
+    evangelium: str = '*',
     exegeta: str = None,
     capitulum: int = None,
     versus: Union[int, List[int]] = None
@@ -49,6 +50,7 @@ def _by_evangelista(
     if exegeta:
         if capitulum and versus:
             # Criteria: 'evangelista', 'capitulum', 'versus', 'exegeta'
+                extract(capitulum)
             pass
         else:
             # Criteria: 'evangelista', 'exegeta'

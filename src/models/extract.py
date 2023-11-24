@@ -32,28 +32,51 @@ class EmptyPageError(Exception):
         super().__init__(self.message)
 
 
-def extract_refs(word: str) -> dict:
+def extract_refs(word: str = None, interval: list[str] = None) -> dict:
     """Tries to match the given url pattern to the references"""
-    try:
-        pattern = re.compile(f".*{word}.*", re.IGNORECASE)
-    except re.error as e:
-        raise ValueError(f"Invalid regex pattern: {pattern}") from e
     refs = {}
-    with open(
-        os.path.join(os.path.dirname(__file__), "../output/output.json"), mode="r"
-    ) as f:
-        for line in f:
-            line = "{" + line.strip()[:-1] + "}"
+    with open(os.path.join(os.path.dirname(__file__), "../output/output.json"), mode="r") as f:
+        if word:
             try:
-                if re.search(pattern, line):
-                    refs.update(json.loads(line))
-            except:
-                pass
+                pattern = re.compile(f".*{word}.*", re.IGNORECASE)  # Gets the whole line
+            except re.error as e:
+                raise ValueError(f"Invalid regex pattern: {pattern}") from e
+            for line in f:
+                line = "{" + line.strip()[:-1] + "}"  # Format the line to support json loading
+                try:
+                    if re.search(pattern, line):
+                        refs.update(json.loads(line))
+                except:
+                    pass
+        elif len(interval) == 2:
+            start, end = interval
+            try:
+                start_pattern = re.compile(f".*{start}.*")
+                end_pattern = re.compile(f".*{end}.*")
+            except re.error as e:
+                raise ValueError(f"Invalid regex pattern: {pattern}") from e
+
+            inside_interval = False
+            for line in f:
+                line = "{" + line.strip()[:-1] + "}"  # Format the line to support json loading
+                try:
+                    if re.search(start_pattern, line):
+                        inside_interval = True
+                        refs.update(json.loads(line))
+                    elif inside_interval and re.search(end_pattern, line):
+                        inside_interval = False
+                        refs.update(json.loads(line))
+                        break  # Stop reading once the end pattern is found within the interval
+                    elif inside_interval:
+                        refs.update(json.loads(line))
+                except:
+                    pass
     if not refs:
         err = NoReferencesError(pattern.pattern)
         logging.error(err.message)
         raise err
     return refs
+
 
 
 def extract_raw_content(refs: dict) -> Generator:
@@ -91,24 +114,29 @@ def extract_raw_content(refs: dict) -> Generator:
             rgxs = {
                 "ut": re.compile(".*unite_textuelle.*"),
                 "vst": re.compile("verset.*"),
-                "hx": re.compile("h[0-4]"),
+                "hx": re.compile("h[2-4]"),
             }
-            cnt = core.find_all("div", {"class": [rgxs.get("ut"), rgxs.get("vst")]}) # Look for the headers and the texts
-            _vst_present = any([bool(c.find_all("div", {"class": rgxs.get("vst")})) for c in cnt]) # Checks whether or not there are headers (html tag headers or class versets)
-            if (cnt and not _vst_present):  # No versets, but there can be html headers, like in: https://gloss-e.irht.cnrs.fr/php/editions_chapitre.php?id=biblia&numLivre=79&chapitre=79_Prol.2b
-                cnt = core.find_all([rgxs.get('hx'), "div"], {"class": rgxs.get("ut")})
-            cnt = list(filter(lambda c: 'groupe_verset' not in c['class'], cnt)) # Deletes all group_verset like in the latest example
+            cnt = core.find_all("div", {"class": [rgxs.get("ut"), rgxs.get("vst")]})  # Gets only for the versets and the texts
+            h_tag = core.find_all(rgxs.get("hx"))[-1] # Looks if there is any header
+            vst_present = any([bool(c.find_all("div", {"class": rgxs.get("vst")})) for c in cnt])  # Checks whether or not there are headers (html tag headers or class versets)
+            if (cnt and not vst_present):  # No versets, but there can be html headers, like in: https://gloss-e.irht.cnrs.fr/php/editions_chapitre.php?id=biblia&numLivre=79&chapitre=79_Prol.2b
+                cnt = core.find_all("div", {"class": rgxs.get("ut")})
+                if h_tag:
+                    cnt.insert(0, h_tag)
+            
+            cnt = list(filter(lambda c: "groupe_verset" not in c.get("class"), cnt))  # Deletes all group_verset like in the latest example
             content = []
             for _c in cnt:
                 c = copy(_c)
-                _isheader = any(re.match(rgx, c["class"][0]) for rgx in [rgxs.get('vst'), rgxs.get('hx')]) # Checks if this component is a header
+                _isheader = any(re.match(rgx, c.get('class')[0]) for rgx in [rgxs.get("vst"), rgxs.get("hx")])  # Checks if this component is a header
+                # Fix logic
                 if _isheader:
-                    content.append({"verset": str, "unite_textuelle": []}) # Each element of this new list is a set of verses
+                    content.append({"verset": str, "unite_textuelle": []})  # Each element of this new list is a set of verses
                     for s in c.find_all("span"):
                         s.decompose()
                         content[-1]["verset"] = normalize("NFKD", c.text.strip())
                 else:
-                    if content: # No headers found.
+                    if content:  # No headers found.
                         content[-1]["unite_textuelle"].append(normalize("NFKD", c.text))
             if content:
                 yield {
@@ -117,7 +145,9 @@ def extract_raw_content(refs: dict) -> Generator:
                     "content": [*content],
                 }
 
-def extract(word: str) -> dict:
+
+def extract(*args, **kwargs) -> dict:
     """Effectively executes the extraction of the data"""
-    core = extract_raw_content(extract_refs(word))
+    refs = extract_refs(*args, **kwargs)
+    core = extract_raw_content(refs)
     return core

@@ -43,7 +43,7 @@ def _crawl(page: str, base: str) -> dict:
         return {}
     content = BeautifulSoup(page, 'lxml')
     refs = content.find_all('a')
-    mapping = {urljoin(base, _split_el(r.get('href'))): r.get_text() for r in refs}
+    mapping = {urljoin(base, _split_el(r.get('href'))): r.get_text(strip=True) for r in refs}
     return mapping
 
 
