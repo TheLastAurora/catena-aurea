@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from requests_html import HTMLSession
+import argparse
 import asyncio
 import json
 import logging
@@ -12,6 +13,14 @@ log_dir = os.path.join(cwd, 'logs')
 out_dir = os.path.join(cwd, 'output')
 os.makedirs(log_dir, exist_ok=True)
 os.makedirs(out_dir, exist_ok=True)
+
+parser = argparse.ArgumentParser(
+    """
+    Please, provide the index url for the crawling operation. 
+    Eg: -i 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena' 
+    """
+    )
+parser.add_argument('-i', '--index', required=True)
 
 logging.basicConfig(filename=os.path.join(log_dir, 'crawler.log'),
                     format='%(asctime)s %(message)s', level=logging.WARNING, filemode='w')
@@ -70,7 +79,8 @@ async def crawl(index: str, *args, depth=2) -> dict:
 
 
 if __name__ == "__main__":
-    index = 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena'
+    args = parser.parse_args()
+    index = args.get('index') if args.get('index') else 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena'
     logging.info('Crawler started...')
     data = asyncio.run(crawl(index))
     logging.info('Crawling job finished.')

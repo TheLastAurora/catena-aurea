@@ -1,16 +1,19 @@
-from crawler import get_page
+from aiohttp import ClientSession
 from unicodedata import normalize
-from copy import copy
 from bs4 import BeautifulSoup
 from typing import Generator
+from pprint import pprint
+from copy import copy
+import asyncio
 import logging
+import json
 import os
 import re
-import json
-
 
 log_dir = os.path.join(os.getcwd(), "logs")
 os.makedirs(log_dir, exist_ok=True)
+
+FORMATER_SYMBOLS = str.maketrans("", "", "<>*0123456789.")
 
 logging.basicConfig(
     filename=os.path.join(log_dir, "extract.log"),
@@ -32,23 +35,38 @@ class EmptyPageError(Exception):
         super().__init__(self.message)
 
 
+async def get_page(url: str) -> str:
+    """Connects to URL page and returns its html in str."""
+    async with ClientSession() as session:
+        try:
+            async with session.get(url, timeout=5) as res:
+                if res.status != 200:
+                    raise Exception(f"Failed to get {url}: {res.status}")
+                return await res.text()
+        except Exception as e:
+            logging.warning(f'[REQUEST] Failed to handle request for {url}.')
+            return ""
+        
+
 def extract_refs(word: str = None, interval: list[str] = None) -> dict:
     """Tries to match the given url pattern to the references"""
     refs = {}
     with open(os.path.join(os.path.dirname(__file__), "../output/output.json"), mode="r") as f:
         if word:
             try:
-                pattern = re.compile(f".*{word}.*", re.IGNORECASE)  # Gets the whole line
+                # Gets the whole line
+                pattern = re.compile(f".*{word}.*", re.IGNORECASE)
             except re.error as e:
                 raise ValueError(f"Invalid regex pattern: {pattern}") from e
             for line in f:
-                line = "{" + line.strip()[:-1] + "}"  # Format the line to support json loading
+                # Format the line to support json loading
+                line = "{" + line.strip()[:-1] + "}"
                 try:
                     if re.search(pattern, line):
                         refs.update(json.loads(line))
                 except:
                     pass
-        elif len(interval) == 2:
+        elif interval and len(interval) == 2:
             start, end = interval
             try:
                 start_pattern = re.compile(f".*{start}.*")
@@ -58,7 +76,8 @@ def extract_refs(word: str = None, interval: list[str] = None) -> dict:
 
             inside_interval = False
             for line in f:
-                line = "{" + line.strip()[:-1] + "}"  # Format the line to support json loading
+                # Format the line to support json loading
+                line = "{" + line.strip()[:-1] + "}"
                 try:
                     if re.search(start_pattern, line):
                         inside_interval = True
@@ -72,82 +91,119 @@ def extract_refs(word: str = None, interval: list[str] = None) -> dict:
                 except:
                     pass
     if not refs:
-        err = NoReferencesError(pattern.pattern)
+        err = NoReferencesError("")
         logging.error(err.message)
         raise err
     return refs
 
 
+def _format(x):
+    return x.text.translate(FORMATER_SYMBOLS).strip()
+
+
+def _type_index(core: BeautifulSoup) -> dict:
+    return {
+        "tittle": _format(core.select_one("h4")),
+        "section": [_format(s) for s in core.select("nav > ul > li > a")],
+    }
+
+
+def _type_subindex(core: BeautifulSoup) -> dict:
+    return {
+        "section": _format(core.select_one("h1")),
+        "subsection": [s.text for s in core.select(".corps-edition ul li a")],
+    }
+
+
+def _type_paragraph(core: BeautifulSoup) -> dict:
+    rgxs = {
+        "ut": re.compile(".*unite_textuelle.*"),
+        "vst": re.compile("verset.*"),
+        "hx": re.compile("h[2-4]"),
+    }
+
+   # Gets only for the versets and the texts
+    cnt = core.find_all(
+        "div", {"class": [rgxs.get("ut"), rgxs.get("vst")]})
+
+    h_tag = core.find_all(rgxs.get("hx"))[-1]  # Looks if there is any header
+    # Checks whether or not there are headers (html tag headers or class versets)
+    _vst_present = any(
+        [bool(c.find_all("div", {"class": rgxs.get("vst")})) for c in cnt])
+    if (cnt and not _vst_present):  # No versets, but there can be html headers, like in: https://gloss-e.irht.cnrs.fr/php/editions_chapitre.php?id=biblia&numLivre=79&chapitre=79_Prol.2b
+        cnt = core.find_all("div", {"class": rgxs.get("ut")})
+        if h_tag:
+            cnt.insert(0, h_tag)
+
+    # Deletes all group_verset like in the latest example
+    cnt = [cnt[0]] + \
+        list(filter(lambda c: "groupe_verset" not in c.get("class"), cnt[1:]))
+    content = []
+
+    if h_tag:  # This comes with an h tag element and the rest is unite_textuelle.
+        content.append({"verset": str, "unite_textuelle": []})
+        content[-1]["verset"] = normalize("NFKD", cnt[0].text.strip())
+        for _c in cnt[1:]:
+            c = copy(_c)
+            content[-1]["unite_textuelle"].append(
+                normalize("NFKD", c.text))
+    else:  # No h tag elements, but versets.
+        for _c in cnt:
+            c = copy(_c)
+            # Checks if this component is a verset element
+            _isverset = any(re.match(rgx, c.get('class')[
+                            0]) for rgx in [rgxs.get("vst")])
+            if _isverset:  # Each element of this new list is a set of verses
+                content.append({"verset": str, "unite_textuelle": []})
+                for s in c.find_all("span"):
+                    s.decompose()
+                    content[-1]["verset"] = normalize(
+                        "NFKD", c.text.strip())
+
+            else:  # Its a unite_textuelle
+                content[-1]["unite_textuelle"].append(
+                    normalize("NFKD", c.text))
+    return {
+        "section": _format(core.select_one("#textContainer .titre_edition")),
+        "subsection": core.select_one("#textContainer h2").text,
+        "content": [*content],
+    } if content else None
+
 
 def extract_raw_content(refs: dict) -> Generator:
-    """Yields and divides the content of the page based on the page HTML three types: index, subindex, content for each url."""
-    for url in refs.keys():
-        _pg = BeautifulSoup(get_page(url), "html.parser")
+    """Yields and breaks the content of the page based on the page HTML three types: index, subindex, content for each url."""
+
+    async def get_pages():
+        tasks = [asyncio.create_task(get_page(url)) for url in refs.keys()]
+        pages = await asyncio.gather(*tasks)
+        return pages
+
+    pages = asyncio.run(get_pages())
+
+    for p in pages:
+        print(p)
+        _pg = BeautifulSoup(p, "html.parser")
         core = _pg.find("div", {"id": "content"})
         if not core:
             err = EmptyPageError()
             logging.error(err.message)
             continue
 
-        # Formatter
-        SYMBOLS = str.maketrans("", "", "<>*0123456789.")
-
-        def format(x):
-            return x.text.translate(SYMBOLS).strip()
-
         # Index
         if core.select("#glossa_ordinaria"):
-            yield {
-                "tittle": format(core.select_one("h4")),
-                "section": [format(s) for s in core.select("nav > ul > li > a")],
-            }
+            yield _type_index(core)
 
         # Subindex
         elif core.select(".edition_intro"):
-            yield {
-                "section": format(core.select_one("h1")),
-                "subsection": [s.text for s in core.select(".corps-edition ul li a")],
-            }
+            yield _type_subindex(core)
 
-        # Core content
+        # Paragraph content
         elif core.select("#textContainer"):
-            rgxs = {
-                "ut": re.compile(".*unite_textuelle.*"),
-                "vst": re.compile("verset.*"),
-                "hx": re.compile("h[2-4]"),
-            }
-            cnt = core.find_all("div", {"class": [rgxs.get("ut"), rgxs.get("vst")]})  # Gets only for the versets and the texts
-            h_tag = core.find_all(rgxs.get("hx"))[-1] # Looks if there is any header
-            vst_present = any([bool(c.find_all("div", {"class": rgxs.get("vst")})) for c in cnt])  # Checks whether or not there are headers (html tag headers or class versets)
-            if (cnt and not vst_present):  # No versets, but there can be html headers, like in: https://gloss-e.irht.cnrs.fr/php/editions_chapitre.php?id=biblia&numLivre=79&chapitre=79_Prol.2b
-                cnt = core.find_all("div", {"class": rgxs.get("ut")})
-                if h_tag:
-                    cnt.insert(0, h_tag)
-            
-            cnt = list(filter(lambda c: "groupe_verset" not in c.get("class"), cnt))  # Deletes all group_verset like in the latest example
-            content = []
-            for _c in cnt:
-                c = copy(_c)
-                _isheader = any(re.match(rgx, c.get('class')[0]) for rgx in [rgxs.get("vst"), rgxs.get("hx")])  # Checks if this component is a header
-                # Fix logic
-                if _isheader:
-                    content.append({"verset": str, "unite_textuelle": []})  # Each element of this new list is a set of verses
-                    for s in c.find_all("span"):
-                        s.decompose()
-                        content[-1]["verset"] = normalize("NFKD", c.text.strip())
-                else:
-                    if content:  # No headers found.
-                        content[-1]["unite_textuelle"].append(normalize("NFKD", c.text))
-            if content:
-                yield {
-                    "section": format(core.select_one("#textContainer .titre_edition")),
-                    "subsection": core.select_one("#textContainer h2").text,
-                    "content": [*content],
-                }
+            yield _type_paragraph(core)
 
 
 def extract(*args, **kwargs) -> dict:
-    """Effectively executes the extraction of the data"""
+    """Executes the extraction of the data"""
     refs = extract_refs(*args, **kwargs)
     core = extract_raw_content(refs)
     return core
