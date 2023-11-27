@@ -1,0 +1,65 @@
+logging:
+  version: 1
+  root_path: ./logs
+  formatters:
+    default:
+      format: "[%(asctime)s] ::: [%(levelname)s] - %(message)s"
+      datefmt: "%I:%M:%S - %d-%M-%Y"
+  handlers:
+    crawler_fh:
+      class: logging.handlers.RotatingFileHandler
+      maxBytes: 10000000
+      level: WARNING
+      formatter: default
+      filename: crawler.log
+      mode: a
+    extract_fh:
+      class: logging.handlers.RotatingFileHandler
+      maxBytes: 1000000
+      level: ERROR
+      formatter: default
+      filename: extract.log
+      mode: w
+    translator_fh:
+      class: logging.handlers.RotatingFileHandler
+      maxBytes: 1000000
+      level: ERROR
+      formatter: default
+      filename: translation.log
+      mode: a
+    catena_validator_fh:
+      class: logging.handlers.RotatingFileHandler
+      maxBytes: 1000000
+      level: ERROR
+      formatter: default
+      filename: catena.log
+      mode: w
+  loggers:
+    crawler:
+      handlers: [crawler_fh]
+    extract:
+      handlers: [extract_fh]
+    translator:
+      handlers: [translator_fh]
+    catena_validator:
+      handlers: [catena_validator_fh]
+services:
+  translator:
+    bard:
+      token: ""
+      proxies: []
+  crawler:
+    url: https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena
+output:
+  root_path: ./outputs
+  sources:
+    crawler:
+      filename: index.json
+      encoding: utf-8
+input:
+  catena:
+    path: ./models/schemas/catena_schema.json
+    encoding: utf-8
+  crawl_index:
+    path: ${output.root_path}/${crawler.filename}
+    encoding: ${crawler.encoding}

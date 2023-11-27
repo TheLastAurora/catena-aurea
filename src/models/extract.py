@@ -2,7 +2,6 @@ from aiohttp import ClientSession
 from unicodedata import normalize
 from bs4 import BeautifulSoup
 from typing import Generator
-from pprint import pprint
 from copy import copy
 import asyncio
 import logging
@@ -198,7 +197,7 @@ def extract_raw_content(refs: dict) -> Generator:
             yield _type_subindex(core)
 
         # Paragraph content
-        elif core.select("#textContainer"):
+        elif core.select("#textContainer"): 
             yield _type_paragraph(core)
 
 

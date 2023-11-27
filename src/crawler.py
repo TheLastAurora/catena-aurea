@@ -1,18 +1,14 @@
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from config.config import get_logger, get_out, get_crawler_url
 from requests_html import HTMLSession
+from urllib.parse import urljoin
+from bs4 import BeautifulSoup
 import argparse
 import asyncio
 import json
-import logging
-import os
 
 
-cwd = os.path.dirname(__file__)
-log_dir = os.path.join(cwd, 'logs')
-out_dir = os.path.join(cwd, 'output')
-os.makedirs(log_dir, exist_ok=True)
-os.makedirs(out_dir, exist_ok=True)
+logger = get_logger('crawler')
+
 
 parser = argparse.ArgumentParser(
     """
@@ -20,10 +16,8 @@ parser = argparse.ArgumentParser(
     Eg: -i 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena' 
     """
     )
-parser.add_argument('-i', '--index', required=True)
 
-logging.basicConfig(filename=os.path.join(log_dir, 'crawler.log'),
-                    format='%(asctime)s %(message)s', level=logging.WARNING, filemode='w')
+parser.add_argument('-i', '--index')
 
 
 def get_page(url: str) -> str:
@@ -35,7 +29,7 @@ def get_page(url: str) -> str:
             raise
         return res.text
     except Exception as re:
-        logging.warning(f'[REQUEST] Failed to handle request for {url}.')
+        logger.warning(f'[REQUEST] Failed to handle request for {url}.')
         return ""
 
 
@@ -80,12 +74,13 @@ async def crawl(index: str, *args, depth=2) -> dict:
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    index = args.get('index') if args.get('index') else 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena'
-    logging.info('Crawler started...')
+    index = args.index if args.index else get_crawler_url()
+    logger.info('Crawler started...')
     data = asyncio.run(crawl(index))
-    logging.info('Crawling job finished.')
+    logger.info('Crawling job finished.')
     if data:
-        with open(os.path.join(out_dir, 'output.json'), 'w', encoding='utf-8') as f:
+        filename, encoding = get_out('crawler')
+        with open(file=filename, encoding=encoding, mode='w') as f:
             json.dump(data, f, indent=2)
             print('Crawler finished with success.')
     else:

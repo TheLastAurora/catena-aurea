@@ -1,6 +1,6 @@
 from typing import List, Dict, Union
 from models.extract import extract
-import logging
+from config.config import get_logger, get_input
 from pprint import pprint
 import os
 import re
@@ -8,21 +8,14 @@ import json
 
 # TODO: Implement all filtering and validation logic here.
 
-log_dir = os.path.join(os.getcwd(), "logs")
-os.makedirs(log_dir, exist_ok=True)
-
-logging.basicConfig(
-    filename=os.path.join(log_dir, "catena.log"),
-    format="%(asctime)s %(message)s",
-    level=logging.ERROR,
-    filemode="w",
-)
+logger = get_logger('catena_validator')
 
 # Loading schema
 global schema
 global data
 
-with open(os.path.join(os.path.dirname(__file__), "../schemas/catena_schema.json")) as f:
+filename, encoding = get_input('catena')
+with open(file=filename, encoding=encoding, mode='r') as f:
     schema = json.load(f)
 
 
