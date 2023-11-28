@@ -1,3 +1,4 @@
+from config.config import get_logger, get_input
 from aiohttp import ClientSession
 from unicodedata import normalize
 from bs4 import BeautifulSoup
@@ -9,17 +10,11 @@ import json
 import os
 import re
 
-log_dir = os.path.join(os.getcwd(), "logs")
-os.makedirs(log_dir, exist_ok=True)
 
 FORMATER_SYMBOLS = str.maketrans("", "", "<>*0123456789.")
 
-logging.basicConfig(
-    filename=os.path.join(log_dir, "extract.log"),
-    format="%(asctime)s %(message)s",
-    level=logging.ERROR,
-    filemode="w",
-)
+
+logger = get_logger('extract')
 
 
 class NoReferencesError(Exception):
@@ -50,7 +45,8 @@ async def get_page(url: str) -> str:
 def extract_refs(word: str = None, interval: list[str] = None) -> dict:
     """Tries to match the given url pattern to the references"""
     refs = {}
-    with open(os.path.join(os.path.dirname(__file__), "../output/output.json"), mode="r") as f:
+    filename, encoding = get_input('crawler')
+    with open(file=filename, encoding=encoding, mode='r') as f:
         if word:
             try:
                 # Gets the whole line
