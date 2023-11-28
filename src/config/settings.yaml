@@ -11,28 +11,28 @@ logging:
       maxBytes: 10000000
       level: WARNING
       formatter: default
-      filename: crawler.log
+      filename: ./logs/crawler.log
       mode: a
     extract_fh:
       class: logging.handlers.RotatingFileHandler
       maxBytes: 1000000
       level: ERROR
       formatter: default
-      filename: extract.log
+      filename: ./logs/extract.log
       mode: w
     translator_fh:
       class: logging.handlers.RotatingFileHandler
       maxBytes: 1000000
       level: ERROR
       formatter: default
-      filename: translation.log
+      filename: ./logs/translation.log
       mode: a
     catena_validator_fh:
       class: logging.handlers.RotatingFileHandler
       maxBytes: 1000000
       level: ERROR
       formatter: default
-      filename: catena.log
+      filename: ./logs/catena.log
       mode: w
   loggers:
     crawler:
@@ -61,5 +61,5 @@ input:
     path: ./models/schemas/catena_schema.json
     encoding: utf-8
   crawl_index:
-    path: ${output.root_path}/${crawler.filename}
-    encoding: ${crawler.encoding}
+    path: ./outputs/index.json
+    encoding: utf-8

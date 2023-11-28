@@ -7,7 +7,6 @@ from copy import copy
 import asyncio
 import logging
 import json
-import os
 import re
 
 
@@ -40,7 +39,7 @@ async def get_page(url: str) -> str:
         except Exception as e:
             logging.warning(f'[REQUEST] Failed to handle request for {url}.')
             return ""
-        
+
 
 def extract_refs(word: str = None, interval: list[str] = None) -> dict:
     """Tries to match the given url pattern to the references"""
@@ -193,7 +192,7 @@ def extract_raw_content(refs: dict) -> Generator:
             yield _type_subindex(core)
 
         # Paragraph content
-        elif core.select("#textContainer"): 
+        elif core.select("#textContainer"):
             yield _type_paragraph(core)
 
 

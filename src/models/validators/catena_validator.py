@@ -1,4 +1,3 @@
-from typing import List, Dict, Union
 from models.extract import extract
 from config.config import get_logger, get_input
 from pprint import pprint
@@ -6,8 +5,8 @@ import os
 import re
 import json
 
-# TODO: Implement all filtering and validation logic here.
-
+# Please, reference the crawler output for the specific interval of the Catena index.
+INTERVAL_LOC = ['sive catena aurea in Lucam', 'Table des mati']
 logger = get_logger('catena_validator')
 
 # Loading schema
@@ -19,31 +18,11 @@ with open(file=filename, encoding=encoding, mode='r') as f:
     schema = json.load(f)
 
 
-def _by_evangelista(
-    evangelium: str = '*',
-    exegeta: str = None,
-    capitulum: int = None,
-    versus: Union[int, List[int]] = None
-) -> Union[List[Dict], Dict, None]:
-    """
-    Returns chapters information based on the specified criteria.
-
-    Parameters:
-        - evangelium (str): The name of the gospel. Use '*' for all gospels.
-        - exegeta (str): The commentator.
-        - capitulum (int): The chapter number.
-        - versus (Union[int, List[int]]): The verse number or a list of the verses numbers.
-
-    Returns:
-        - List[Dict]: List of chapters if multiple chapters match the criteria.
-        - Dict: Chapter information if a single chapter matches the criteria.
-        - None: If no matching chapters are found.
-    """
-
+def _by_evangelista(evangelium: str = '*', exegeta: str = None, capitulum: int = None, versus: int | list[int] = None) -> list[dict] | dict | None:
     if exegeta:
         if capitulum and versus:
             # Criteria: 'evangelista', 'capitulum', 'versus', 'exegeta'
-                extract(capitulum)
+                extract(interval=INTERVAL_LOC)
             pass
         else:
             # Criteria: 'evangelista', 'exegeta'

@@ -12,8 +12,8 @@ logger = get_logger('crawler')
 
 parser = argparse.ArgumentParser(
     """
-    Please, provide the index url for the crawling operation. 
-    Eg: -i 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena' 
+    Please, provide the index url for the crawling operation.
+    Eg: -i 'https://gloss-e.irht.cnrs.fr/php/livres-liste.php?id=catena'
     """
     )
 
