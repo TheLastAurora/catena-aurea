@@ -24,7 +24,7 @@ def get_page(url: str) -> str:
     """Connects to URL page and returns its html in str."""
     try:
         session = HTMLSession()
-        res = session.get(url, timeout=5)
+        res = session.get(url, timeout=10)
         if res.status_code != 200:
             raise
         return res.text

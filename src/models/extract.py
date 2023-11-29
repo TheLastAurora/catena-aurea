@@ -1,11 +1,10 @@
 from config.config import get_logger, get_input
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 from unicodedata import normalize
 from bs4 import BeautifulSoup
 from typing import Generator
 from copy import copy
 import asyncio
-import logging
 import json
 import re
 
@@ -23,28 +22,29 @@ class NoReferencesError(Exception):
 
 
 class EmptyPageError(Exception):
-    def __init__(self):
-        self.message = f"[CONTENT] Failed to retrieve content."
+    def __init__(self, msg=None):
+        self.message = "[CONTENT] Failed to retrieve page content." if not msg else f"[CONTENT] {msg}"
         super().__init__(self.message)
 
 
 async def get_page(url: str) -> str:
     """Connects to URL page and returns its html in str."""
-    async with ClientSession() as session:
+    timeout = ClientTimeout(total=60)
+    async with ClientSession(timeout=timeout) as session:
         try:
-            async with session.get(url, timeout=5) as res:
+            async with session.get(url) as res:
                 if res.status != 200:
                     raise Exception(f"Failed to get {url}: {res.status}")
                 return await res.text()
         except Exception as e:
-            logging.warning(f'[REQUEST] Failed to handle request for {url}.')
+            logger.warning(f'[REQUEST] Failed to handle request for {url}.')
             return ""
 
 
 def extract_refs(word: str = None, interval: list[str] = None) -> dict:
     """Tries to match the given url pattern to the references"""
     refs = {}
-    filename, encoding = get_input('crawler')
+    filename, encoding = get_input('crawl_index')
     with open(file=filename, encoding=encoding, mode='r') as f:
         if word:
             try:
@@ -86,7 +86,7 @@ def extract_refs(word: str = None, interval: list[str] = None) -> dict:
                     pass
     if not refs:
         err = NoReferencesError("")
-        logging.error(err.message)
+        logger.error(err.message)
         raise err
     return refs
 
@@ -173,14 +173,17 @@ def extract_raw_content(refs: dict) -> Generator:
         return pages
 
     pages = asyncio.run(get_pages())
-
+    if not any(pages):
+        err = EmptyPageError("No pages avaliable for extraction. Please, ensure the webpages are online.")
+        logger.error(err.message)
+        raise err
+    
     for p in pages:
-        print(p)
         _pg = BeautifulSoup(p, "html.parser")
         core = _pg.find("div", {"id": "content"})
         if not core:
             err = EmptyPageError()
-            logging.error(err.message)
+            logger.error(err.message)
             continue
 
         # Index

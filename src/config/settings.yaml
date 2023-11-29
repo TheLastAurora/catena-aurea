@@ -54,7 +54,7 @@ output:
   root_path: ./outputs
   sources:
     crawler:
-      filename: index.json
+      filename: ./outputs/index.json
       encoding: utf-8
 input:
   catena:
