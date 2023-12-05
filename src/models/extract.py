@@ -69,7 +69,7 @@ def extract_refs(word: str = None, interval: list[str] = None) -> dict:
                 raise ValueError(f"Invalid regex pattern: {pattern}") from e
 
             inside_interval = False
-            for line in f:
+            for i, line in enumerate(f.readlines()):
                 # Format the line to support json loading
                 line = "{" + line.strip()[:-1] + "}"
                 try:
@@ -177,7 +177,7 @@ def extract_raw_content(refs: dict) -> Generator:
         err = EmptyPageError("No pages avaliable for extraction. Please, ensure the webpages are online.")
         logger.error(err.message)
         raise err
-    
+
     for p in pages:
         _pg = BeautifulSoup(p, "html.parser")
         core = _pg.find("div", {"id": "content"})

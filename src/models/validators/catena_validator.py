@@ -1,3 +1,4 @@
+from typing import Dict, List
 from models.extract import extract
 from config.config import get_logger, get_input
 from pprint import pprint
@@ -5,8 +6,11 @@ import os
 import re
 import json
 
+# TODO: Implement html formating and validation.
+
+
 # Please, reference the crawler output for the specific interval of the Catena index.
-INTERVAL_LOC = ['sive catena aurea in Lucam', 'Table des mati']
+INTERVAL_LOC = ['"A propos de cette \u00e9dition?&"', 'Table des mati']
 logger = get_logger('catena_validator')
 
 # Loading schema
@@ -22,7 +26,7 @@ def _by_evangelista(evangelium: str = '*', exegeta: str = None, capitulum: int =
     if exegeta:
         if capitulum and versus:
             # Criteria: 'evangelista', 'capitulum', 'versus', 'exegeta'
-                extract(interval=INTERVAL_LOC)
+            content = extract(interval=INTERVAL_LOC)
             pass
         else:
             # Criteria: 'evangelista', 'exegeta'
